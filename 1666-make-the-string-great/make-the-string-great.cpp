@@ -8,7 +8,6 @@ public:
                 s.erase(i,2);
                 cout<<s<<endl;
                 i=-1;
-                
             }
         }
         return s;
