@@ -20,17 +20,14 @@ public:
             TreeNode* curr = st.top().first;
             string path = st.top().second;
             st.pop();
-
             if (!curr->left && !curr->right) {
                 if (smallest == "" || path < smallest) {
                     smallest = path;
                 }
             }
-
             if (curr->right) {
                 st.push({curr->right, char('a' + curr->right->val) + path});
             }
-
             if (curr->left) {
                 st.push({curr->left, char('a' + curr->left->val) + path});
             }
