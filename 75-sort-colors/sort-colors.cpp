@@ -1,19 +1,19 @@
-
+#include <vector>
 
 class Solution {
 public:
-    void sortColors(vector<int>& nums) {
+    void sortColors(std::vector<int>& nums) {
         int left = 0;
         int right = nums.size() - 1;
         int curr = 0;
 
         while (curr <= right) {
             if (nums[curr] == 0) {
-                swap(nums[left], nums[curr]);
+                std::swap(nums[left], nums[curr]);
                 left++;
                 curr++;
             } else if (nums[curr] == 2) {
-                swap(nums[curr], nums[right]);
+                std::swap(nums[curr], nums[right]);
                 right--;
             } else {
                 curr++;
