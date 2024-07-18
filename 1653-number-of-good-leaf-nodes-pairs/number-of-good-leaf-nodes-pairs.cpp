@@ -1,58 +1,45 @@
 class Solution {
-private:
-    void traverseTree(TreeNode* currNode, TreeNode* prevNode,
-                      unordered_map<TreeNode*, vector<TreeNode*>>& graph,
-                      unordered_set<TreeNode*>& leafNodes) {
-        if (!currNode) {
-            return;
-        }
-        if (!currNode->left && !currNode->right) {
-            leafNodes.insert(currNode);
-        }
-        if (prevNode) {
-            graph[prevNode].push_back(currNode);
-            graph[currNode].push_back(prevNode);
-        }
-        traverseTree(currNode->left, currNode, graph, leafNodes);
-        traverseTree(currNode->right, currNode, graph, leafNodes);
-    }
-
 public:
-    int countPairs(TreeNode* root, int distance) {
-        unordered_map<TreeNode*, vector<TreeNode*>> graph;
-        unordered_set<TreeNode*> leafNodes;
+    vector<int> help(TreeNode* root, int distance, int& ans) {
+        if(!root) {
+            return {};
+        }
+        if(root->left == nullptr && root->right == nullptr) {
+            return {1}; // Leaf node distance is 1 from itself
+        }
 
-        traverseTree(root, nullptr, graph, leafNodes);
+        auto l = help(root->left, distance, ans);
+        auto r = help(root->right, distance, ans);
 
-        int ans = 0;
-
-        for (auto leaf : leafNodes) {
-            queue<TreeNode*> bfsQueue;
-            unordered_set<TreeNode*> seen;
-            bfsQueue.push(leaf);
-            seen.insert(leaf);
-
-            // Go through all nodes that are within the given distance of
-            // the current leaf node
-            for (int i = 0; i <= distance; i++) {
-                int size = bfsQueue.size();
-                for (int j = 0; j < size; j++) {
-                    TreeNode* currNode = bfsQueue.front();
-                    bfsQueue.pop();
-                    if (leafNodes.count(currNode) && currNode != leaf) {
-                        ans++;
-                    }
-                    if (graph.count(currNode)) {
-                        for (auto neighbor : graph[currNode]) {
-                            if (!seen.count(neighbor)) {
-                                bfsQueue.push(neighbor);
-                                seen.insert(neighbor);
-                            }
-                        }
-                    }
+        // Count pairs of leaf nodes from left and right subtrees
+        for(auto a : l) {
+            for(auto b : r) {
+                if(a + b <= distance) {
+                    ans++;
                 }
             }
         }
-        return ans / 2;
+
+        vector<int> ret;
+        // Update distances for left subtree
+        for(auto a : l) {
+            if(a + 1 < distance) {
+                ret.push_back(a + 1);
+            }
+        }
+        // Update distances for right subtree
+        for(auto a : r) {
+            if(a + 1 < distance) {
+                ret.push_back(a + 1);
+            }
+        }
+
+        return ret;
+    }
+
+    int countPairs(TreeNode* root, int distance) {
+        int ans = 0;
+        help(root, distance, ans);
+        return ans;
     }
 };
