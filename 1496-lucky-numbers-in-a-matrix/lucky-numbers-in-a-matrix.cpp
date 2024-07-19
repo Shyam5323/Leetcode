@@ -13,7 +13,6 @@ public:
         for (int i = 0; i<matrix.size(); i++) {
             for(int j = 0; j<matrix[0].size(); j++) {
                 if(matrix[i][j] <= rows[i] && matrix[i][j] >= cols[j]) {
-                    cout<<cols[j] << " "<<matrix[i][j] << " ";
                     ans.push_back(matrix[i][j]);
                 }
             }
