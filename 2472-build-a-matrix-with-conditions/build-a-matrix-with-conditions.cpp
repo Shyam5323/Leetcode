@@ -51,18 +51,15 @@ public:
         }
 
         vector<vector<int>> matrix(k, vector<int>(k, 0));
-        vector<int> rowPosition(k + 1), colPosition(k + 1);
 
         for (int i = 0; i < k; ++i) {
-            rowPosition[rowOrder[i]] = i;
-            colPosition[colOrder[i]] = i;
+            for(int j = 0; j< k; j++) {
+                if(rowOrder[i] == colOrder[j]) {
+                    matrix[i][j] = rowOrder[i];
+                }
+            }
         }
 
-        for (int i = 1; i <= k; ++i) {
-            int r = rowPosition[i];
-            int c = colPosition[i];
-            matrix[r][c] = i;
-        }
 
         return matrix;
     }
