@@ -1,6 +1,3 @@
-#include <vector>
-#include <deque>
-using namespace std;
 
 class Solution {
 public:
@@ -9,7 +6,7 @@ public:
         vector<int> ans;
 
         for (int i = 0; i < nums.size(); ++i) {
-            if (!dq.empty() && dq.front() == i - k) {
+            if (!dq.empty() && dq.front() <= i - k) {
                 dq.pop_front();
             }
 
