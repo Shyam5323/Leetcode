@@ -1,54 +1,58 @@
 class Solution {
 public:
-    bool isMagicSquare(vector<vector<int>>& grid, int row, int col) {
-        unordered_set<int> nums;
-        int sum = 0;
-        
-        for (int i = 0; i < 3; i++) {
-            int num = grid[row][col + i];
-            if (num < 1 || num > 9 || nums.count(num)) return false;
-            nums.insert(num);
-            sum += num;
-        }
-        
-        for (int i = 1; i < 3; i++) {
-            int rowSum = 0;
-            for (int j = 0; j < 3; j++) {
-                int num = grid[row + i][col + j];
-                if (num < 1 || num > 9 || nums.count(num)) return false;
-                nums.insert(num);
-                rowSum += num;
-            }
-            if (rowSum != sum) return false;
-        }
-        
-        for (int j = 0; j < 3; j++) {
-            int colSum = 0;
-            for (int i = 0; i < 3; i++) {
-                colSum += grid[row + i][col + j];
-            }
-            if (colSum != sum) return false;
-        }
-        
-        int diag1 = grid[row][col] + grid[row + 1][col + 1] + grid[row + 2][col + 2];
-        int diag2 = grid[row][col + 2] + grid[row + 1][col + 1] + grid[row + 2][col];
-        
-        return diag1 == sum && diag2 == sum;
-    }
-    
     int numMagicSquaresInside(vector<vector<int>>& grid) {
-        int count = 0;
-        int rows = grid.size();
-        int cols = grid[0].size();
-        
-        for (int i = 0; i <= rows - 3; i++) {
-            for (int j = 0; j <= cols - 3; j++) {
-                if (isMagicSquare(grid, i, j)) {
-                    count++;
+        int ans = 0;
+        int m = grid.size();
+        int n = grid[0].size();
+        for (int row = 0; row + 2 < m; row++) {
+            for (int col = 0; col + 2 < n; col++) {
+                if (isMagicSquare(grid, row, col)) {
+                    ans++;
                 }
             }
         }
-        
-        return count;
+        return ans;
+    }
+
+private:
+    bool isMagicSquare(vector<vector<int>>& grid, int row, int col) {
+        bool seen[10] = {false};
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                int num = grid[row + i][col + j];
+                if (num < 1 || num > 9) return false;
+                if (seen[num]) return false;
+                seen[num] = true;
+            }
+        }
+
+        int diagonal1 =
+            grid[row][col] + grid[row + 1][col + 1] + grid[row + 2][col + 2];
+        int diagonal2 =
+            grid[row + 2][col] + grid[row + 1][col + 1] + grid[row][col + 2];
+
+        if (diagonal1 != diagonal2) return false;
+
+        int row1 = grid[row][col] + grid[row][col + 1] + grid[row][col + 2];
+        int row2 = grid[row + 1][col] + grid[row + 1][col + 1] +
+                   grid[row + 1][col + 2];
+        int row3 = grid[row + 2][col] + grid[row + 2][col + 1] +
+                   grid[row + 2][col + 2];
+
+        if (!(row1 == diagonal1 && row2 == diagonal1 && row3 == diagonal1)) {
+            return false;
+        }
+
+        int col1 = grid[row][col] + grid[row + 1][col] + grid[row + 2][col];
+        int col2 = grid[row][col + 1] + grid[row + 1][col + 1] +
+                   grid[row + 2][col + 1];
+        int col3 = grid[row][col + 2] + grid[row + 1][col + 2] +
+                   grid[row + 2][col + 2];
+
+        if (!(col1 == diagonal1 && col2 == diagonal1 && col3 == diagonal1)) {
+            return false;
+        }
+
+        return true;
     }
 };
