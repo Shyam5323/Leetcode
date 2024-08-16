@@ -1,31 +1,28 @@
-import java.util.HashMap;
-import java.util.Map;
-
 class Solution {
-    private Map<String, Boolean> memo = new HashMap<>();
 
-    public boolean part(int[] nums, int sum1, int sum2, int index) {
-        // Base case: If we've considered all elements
-        if (index == nums.length) {
-            return sum1 == sum2;
+    public boolean part(int[] nums, int sum, int index, int[][] dp) {
+        if (sum == 0) {
+            return true;
+        }
+        
+        if (index >= nums.length || sum < 0) {
+            return false;
         }
 
-        // Create a unique key for the current state
-        String key = index + ":" + (sum1 - sum2);
-
-        // Check if this state has already been computed
-        if (memo.containsKey(key)) {
-            return memo.get(key);
+        if (dp[index][sum] != -1) {
+            return dp[index][sum] == 1; 
         }
 
-        // Recursive case: Try including the current element in either sum1 or sum2
-        boolean canPartition = part(nums, sum1 + nums[index], sum2, index + 1) ||
-                               part(nums, sum1, sum2 + nums[index], index + 1);
+        // Recursive case: try including or excluding the current number
+        boolean canTake = part(nums, sum - nums[index], index + 1, dp);
+        boolean cantTake = part(nums, sum, index + 1, dp);
 
-        // Store the result in the memoization map
-        memo.put(key, canPartition);
+        boolean result = canTake || cantTake;
 
-        return canPartition;
+        // Store the result in dp array (convert boolean to int)
+        dp[index][sum] = result ? 1 : 0;
+
+        return result;
     }
 
     public boolean canPartition(int[] nums) {
@@ -34,12 +31,22 @@ class Solution {
             totalSum += num;
         }
 
-        // If the total sum is odd, we cannot partition it into two equal subsets
+        // If the total sum is odd, we can't partition it into two equal subsets
         if (totalSum % 2 != 0) {
             return false;
         }
 
-        // Try to find a subset with a sum equal to half of the total sum
-        return part(nums, 0, 0, 0);
+        int targetSum = totalSum / 2;
+        int[][] dp = new int[nums.length][targetSum + 1];
+
+        // Initialize the dp array with -1 (indicating uncomputed states)
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = 0; j <= targetSum; j++) {
+                dp[i][j] = -1;
+            }
+        }
+
+        // Start the recursion with the full target sum
+        return part(nums, targetSum, 0, dp);
     }
 }
