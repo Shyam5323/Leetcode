@@ -1,24 +1,25 @@
 class Solution {
 public:
     int getLucky(string s, int k) {
-        int sum = 0;
-        for (char c : s) {
-            int value = c - 'a' + 1;
-            while (value > 0) {
-                sum += value % 10;
-                value /= 10;
+        int ans = 0;
+        for(char c : s) {
+            int ch = c-'a'+1;
+            int a = 0;
+            while(ch > 0) {
+                a += ch%10;
+                ch /=10;
             }
+            ans += a;
         }
-
-        for (int i = 1; i < k; i++) {
-            int newSum = 0;
-            while (sum > 0) {
-                newSum += sum % 10;
-                sum /= 10;
+        int t = ans;
+        for(int i = 0; i+1<k; i++) {
+            ans = 0;
+            while(t > 0) {
+                ans += t%10;
+                t/=10;
             }
-            sum = newSum;
+            t = ans;
         }
-
-        return sum;
+        return ans;
     }
 };
