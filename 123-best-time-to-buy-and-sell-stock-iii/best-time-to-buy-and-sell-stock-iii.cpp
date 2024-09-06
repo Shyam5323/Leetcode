@@ -1,32 +1,32 @@
 class Solution {
 public:
-    int recurse(vector<int>& prices, int transLeft, int currTrans, int idx, vector<vector<vector<int>>>& dp) {
-        if (idx >= prices.size() || transLeft == 0) {
-            return 0;
-        }
-        if (dp[idx][currTrans][transLeft] != -1) return dp[idx][currTrans][transLeft];
-        
-        int takes = 0;
-        int noTakes = 0;
-
-        if (currTrans == 0) { // Buy
-            // Option 1: Buy at current index
-            takes = -prices[idx] + recurse(prices, transLeft, 1, idx + 1, dp);
-            // Option 2: Skip buying and move to the next index
-            noTakes = recurse(prices, transLeft, 0, idx + 1, dp);
-        } else if (currTrans == 1) { // Sell
-            // Option 1: Sell at current index
-            takes = prices[idx] + recurse(prices, transLeft - 1, 0, idx + 1, dp);
-            // Option 2: Skip selling and move to the next index
-            noTakes = recurse(prices, transLeft, 1, idx + 1, dp);
-        }
-
-        return dp[idx][currTrans][transLeft] = max(takes, noTakes);
-    }
-
     int maxProfit(vector<int>& prices) {
         int n = prices.size();
-        vector<vector<vector<int>>> dp(n, vector<vector<int>>(2, vector<int>(3, -1)));
-        return recurse(prices, 2, 0, 0, dp);
+        if (n == 0) return 0;
+
+        // Initialize the dp table
+        vector<vector<vector<int>>> dp(n + 1, vector<vector<int>>(2, vector<int>(3, 0)));
+
+        // Iterate over the days in reverse order
+        for (int idx = n - 1; idx >= 0; --idx) {
+            for (int currTrans = 0; currTrans <= 1; ++currTrans) {
+                for (int transLeft = 1; transLeft <= 2; ++transLeft) {
+                    if (currTrans == 0) { // Buy
+                        dp[idx][currTrans][transLeft] = max(
+                            -prices[idx] + dp[idx + 1][1][transLeft], // Buy the stock
+                            dp[idx + 1][0][transLeft] // Skip the buy
+                        );
+                    } else { // Sell
+                        dp[idx][currTrans][transLeft] = max(
+                            prices[idx] + dp[idx + 1][0][transLeft - 1], // Sell the stock
+                            dp[idx + 1][1][transLeft] // Skip the sell
+                        );
+                    }
+                }
+            }
+        }
+
+        // The result will be in dp[0][0][2]
+        return dp[0][0][2];
     }
 };
