@@ -1,26 +1,33 @@
+#include <vector>
+#include <algorithm>
+
 class Solution {
-private: 
-    void permuteUnique(vector<int>& nums, vector<vector<int>>& output, vector<int> temp, int index){
-        if(index == nums.size()){
-            output.push_back(temp);
+private:
+    void backtrack(std::vector<int>& nums, std::vector<std::vector<int>>& result, std::vector<int>& current, std::vector<bool>& used) {
+        if (current.size() == nums.size()) {
+            result.push_back(current);
             return;
         }
-        for(int i=index; i<temp.size(); i++){
-            swap(temp[index], temp[i]);
-            bool isPresent = find(output.begin(), output.end(), temp) != output.end();
-            if(isPresent){
-                continue;
+        
+        for (int i = 0; i < nums.size(); ++i) {
+            if (used[i] || (i > 0 && nums[i] == nums[i - 1] && !used[i - 1])) {
+                continue;  // Skip duplicates
             }
-            permuteUnique(nums, output, temp, index+1);
+            used[i] = true;
+            current.push_back(nums[i]);
+            backtrack(nums, result, current, used);
+            used[i] = false;
+            current.pop_back();
         }
     }
+    
 public:
-    vector<vector<int>> permuteUnique(vector<int>& nums) {
-        vector<vector<int>> output;
-        vector<int> temp = nums;
-        sort(temp.begin(), temp.end());
-        permuteUnique(nums, output, temp, 0);
-        return output;
+    std::vector<std::vector<int>> permuteUnique(std::vector<int>& nums) {
+        std::vector<std::vector<int>> result;
+        std::vector<int> current;
+        std::vector<bool> used(nums.size(), false);
+        std::sort(nums.begin(), nums.end());
+        backtrack(nums, result, current, used);
+        return result;
     }
 };
-
