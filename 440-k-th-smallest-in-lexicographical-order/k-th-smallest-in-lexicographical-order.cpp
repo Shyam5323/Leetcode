@@ -13,24 +13,20 @@ public:
     
     int findKthNumber(int n, int k) {
         int curr = 1;
-        k--;  // We're counting from 0, so adjust k
+        k--;  
         
-        // While there are more digits to be found
         while (k > 0) {
-            // Calculate the number of steps within the current subtree
             long long steps = countSteps(curr, n);
             
             if (steps <= k) {
-                // If the current subtree size is less than or equal to k, move to the next sibling
                 curr++;
                 k -= steps;
             } else {
-                // Otherwise, go down one level in the tree (append a zero to the current number)
                 curr *= 10;
                 k--;
             }
         }
         
-        return curr;  // The k-th smallest number in lexicographical order
+        return curr;  
     }
 };
