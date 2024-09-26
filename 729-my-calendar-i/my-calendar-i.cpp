@@ -4,7 +4,7 @@ public:
     MyCalendar() {}
 
     bool book(int start, int end) {
-        auto next = intervals.lower_bound(start); 
+        auto next = intervals.upper_bound(start); 
         if (next != intervals.end() && next->first < end) {
             return false; 
         }
