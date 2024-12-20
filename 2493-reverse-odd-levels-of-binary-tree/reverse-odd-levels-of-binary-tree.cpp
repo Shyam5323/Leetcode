@@ -1,58 +1,32 @@
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution {
 public:
-    unordered_map<int, stack<int>> oddLevels;
-    void bfs(TreeNode* root, unordered_map<int, stack<int>>& oddLevels ) {
-        queue<pair<TreeNode*, int>> q;
-        q.push({root, 0});
-        while(!q.empty()) {
-            TreeNode* curr = q.front().first;
-            int currLev = q.front().second;
-            if(currLev%2 != 0) {
-                oddLevels[currLev].push(curr->val);
-            }
-            q.pop();
-            if(curr->left) {
-                q.push({curr->left, currLev + 1});
-            }
-            if(curr->right) {
-                q.push({curr->right, currLev + 1});
-            }
-        } 
-    }
-    void bfsUpdate(TreeNode* root, unordered_map<int, stack<int>>& oddLevels) {
-        queue<pair<TreeNode*, int>> q;
-        q.push({root, 0});
-        while(!q.empty()) {
-            TreeNode* curr = q.front().first;
-            int currLev = q.front().second;
-            if(currLev%2 != 0) {
-                curr->val = oddLevels[currLev].top();
-                oddLevels[currLev].pop();
-            }
-            q.pop();
-            if(curr->left) {
-                q.push({curr->left, currLev + 1});
-            }
-            if(curr->right) {
-                q.push({curr->right, currLev + 1});
-            }
-        } 
-    }
     TreeNode* reverseOddLevels(TreeNode* root) {
-        bfs(root, oddLevels);
-        bfsUpdate(root, oddLevels);
+        if (!root) return nullptr;
+
+        queue<TreeNode*> q;
+        q.push(root);
+        int level = 0;
+
+        while (!q.empty()) {
+            int size = q.size();
+            vector<TreeNode*> nodesAtLevel;
+            for (int i = 0; i < size; ++i) {
+                TreeNode* node = q.front();
+                q.pop();
+                nodesAtLevel.push_back(node);
+
+                if (node->left) q.push(node->left);
+                if (node->right) q.push(node->right);
+            }
+            if (level % 2 != 0) {
+                int n = nodesAtLevel.size();
+                for (int i = 0; i < n / 2; ++i) {
+                    swap(nodesAtLevel[i]->val, nodesAtLevel[n - i - 1]->val);
+                }
+            }
+            ++level;
+        }
+
         return root;
-        
     }
 };
