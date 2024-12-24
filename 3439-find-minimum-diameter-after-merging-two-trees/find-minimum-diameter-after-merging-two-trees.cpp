@@ -1,66 +1,74 @@
 class Solution {
 public:
-    int bfs(unordered_map<int, unordered_set<int>>& adj, int start) {
-        queue<int> q;
-        unordered_map<int, int> dist;
-        q.push(start);
-        dist[start] = 0;
-        int farthestNode = start;
+    int minimumDiameterAfterMerge(vector<vector<int>>& edges1,
+                                  vector<vector<int>>& edges2) {
+        int n = edges1.size() + 1;
+        int m = edges2.size() + 1;
 
-        while (!q.empty()) {
-            int node = q.front();
-            q.pop();
-            for (int neighbor : adj[node]) {
-                if (!dist.count(neighbor)) {
-                    dist[neighbor] = dist[node] + 1;
-                    q.push(neighbor);
-                    farthestNode = neighbor;
+        vector<vector<int>> adjList1 = buildAdjList(n, edges1);
+        vector<vector<int>> adjList2 = buildAdjList(m, edges2);
+
+        int diameter1 = findDiameter(n, adjList1);
+        int diameter2 = findDiameter(m, adjList2);
+
+
+        int combinedDiameter =
+            ceil(diameter1 / 2.0) + ceil(diameter2 / 2.0) + 1;
+
+        return max({diameter1, diameter2, combinedDiameter});
+    }
+
+private:
+    vector<vector<int>> buildAdjList(int size, vector<vector<int>>& edges) {
+        vector<vector<int>> adjList(size);
+        for (auto& edge : edges) {
+            adjList[edge[0]].push_back(edge[1]);
+            adjList[edge[1]].push_back(edge[0]);
+        }
+        return adjList;
+    };
+
+    int findDiameter(int n, vector<vector<int>>& adjList) {
+        queue<int> leavesQueue;
+        vector<int> degrees(n);
+    
+        for (int node = 0; node < n; node++) {
+            degrees[node] =
+                adjList[node].size();  
+            if (degrees[node] == 1) {
+                leavesQueue.push(node);
+            }
+        }
+
+        int remainingNodes = n;
+        int leavesLayersRemoved = 0;
+
+        while (remainingNodes > 2) {
+            int size = leavesQueue.size();  
+                                            
+            remainingNodes -= size;
+            leavesLayersRemoved++;
+
+            for (int i = 0; i < size; i++) {
+                int currentNode = leavesQueue.front();
+                leavesQueue.pop();
+
+                for (int neighbor : adjList[currentNode]) {
+                    degrees[neighbor]--;
+                    if (degrees[neighbor] == 1) {
+                        leavesQueue.push(
+                            neighbor);
+                                       
+                    }
                 }
             }
         }
 
-        return farthestNode;
-    }
+        // If exactly two nodes remain, return the diameter as twice the number
+        // of layers of leaves removed + 1 (as the diameter will include the
+        // final connecting edge)
+        if (remainingNodes == 2) return 2 * leavesLayersRemoved + 1;
 
-    int calculateDiameter(unordered_map<int, unordered_set<int>>& adj) {
-        int farthestNode = bfs(adj, 0);
-        queue<int> q;
-        unordered_map<int, int> dist;
-        q.push(farthestNode);
-        dist[farthestNode] = 0;
-        int diameter = 0;
-
-        while (!q.empty()) {
-            int node = q.front();
-            q.pop();
-            for (int neighbor : adj[node]) {
-                if (!dist.count(neighbor)) {
-                    dist[neighbor] = dist[node] + 1;
-                    q.push(neighbor);
-                    diameter = max(diameter, dist[neighbor]);
-                }
-            }
-        }
-
-        return diameter;
-    }
-
-    int minimumDiameterAfterMerge(vector<vector<int>>& edges1, vector<vector<int>>& edges2) {
-        unordered_map<int, unordered_set<int>> adj1, adj2;
-        for (auto& edge : edges1) {
-            adj1[edge[0]].insert(edge[1]);
-            adj1[edge[1]].insert(edge[0]);
-        }
-        for (auto& edge : edges2) {
-            adj2[edge[0]].insert(edge[1]);
-            adj2[edge[1]].insert(edge[0]);
-        }
-
-        int diameter1 = calculateDiameter(adj1);
-        int diameter2 = calculateDiameter(adj2);
-
-        int minDiameter = max({diameter1, diameter2, (diameter1 + 1) / 2 + (diameter2 + 1) / 2 + 1});
-
-        return minDiameter;
+        return 2 * leavesLayersRemoved;
     }
 };
