@@ -1,33 +1,51 @@
 class Solution {
 public:
-    int minimumDiameterAfterMerge(vector<vector<int>>& edges1, vector<vector<int>>& edges2) {
-        auto calculateDiameter = [&](unordered_map<int, unordered_set<int>>& adj) -> int {
-            auto bfs = [&](int start) -> pair<int, int> {
-                queue<int> q;
-                unordered_map<int, int> dist;
-                q.push(start);
-                dist[start] = 0;
-                int farthestNode = start;
+    int bfs(unordered_map<int, unordered_set<int>>& adj, int start) {
+        queue<int> q;
+        unordered_map<int, int> dist;
+        q.push(start);
+        dist[start] = 0;
+        int farthestNode = start;
 
-                while (!q.empty()) {
-                    int node = q.front();
-                    q.pop();
-                    for (int neighbor : adj[node]) {
-                        if (!dist.count(neighbor)) {
-                            dist[neighbor] = dist[node] + 1;
-                            q.push(neighbor);
-                            farthestNode = neighbor;
-                        }
-                    }
+        while (!q.empty()) {
+            int node = q.front();
+            q.pop();
+            for (int neighbor : adj[node]) {
+                if (!dist.count(neighbor)) {
+                    dist[neighbor] = dist[node] + 1;
+                    q.push(neighbor);
+                    farthestNode = neighbor;
                 }
+            }
+        }
 
-                return {farthestNode, dist[farthestNode]};
-            };
-            auto [farthestNode, _] = bfs(0);
-            auto [_, diameter] = bfs(farthestNode);
-            return diameter;
-        };
+        return farthestNode;
+    }
 
+    int calculateDiameter(unordered_map<int, unordered_set<int>>& adj) {
+        int farthestNode = bfs(adj, 0);
+        queue<int> q;
+        unordered_map<int, int> dist;
+        q.push(farthestNode);
+        dist[farthestNode] = 0;
+        int diameter = 0;
+
+        while (!q.empty()) {
+            int node = q.front();
+            q.pop();
+            for (int neighbor : adj[node]) {
+                if (!dist.count(neighbor)) {
+                    dist[neighbor] = dist[node] + 1;
+                    q.push(neighbor);
+                    diameter = max(diameter, dist[neighbor]);
+                }
+            }
+        }
+
+        return diameter;
+    }
+
+    int minimumDiameterAfterMerge(vector<vector<int>>& edges1, vector<vector<int>>& edges2) {
         unordered_map<int, unordered_set<int>> adj1, adj2;
         for (auto& edge : edges1) {
             adj1[edge[0]].insert(edge[1]);
@@ -41,9 +59,8 @@ public:
         int diameter1 = calculateDiameter(adj1);
         int diameter2 = calculateDiameter(adj2);
 
-        int minDiameter = INT_MAX;
+        int minDiameter = max({diameter1, diameter2, (diameter1 + 1) / 2 + (diameter2 + 1) / 2 + 1});
 
-        minDiameter = max({diameter1, diameter2, (diameter1 + 1) / 2 + (diameter2 + 1) / 2 + 1});
         return minDiameter;
     }
 };
