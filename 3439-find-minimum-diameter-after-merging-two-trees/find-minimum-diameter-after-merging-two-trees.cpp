@@ -43,9 +43,7 @@ public:
 
         int minDiameter = INT_MAX;
 
-                minDiameter = min(minDiameter, max({diameter1, diameter2, (diameter1 + 1) / 2 + (diameter2 + 1) / 2 + 1}));
-         
-
+        minDiameter = max({diameter1, diameter2, (diameter1 + 1) / 2 + (diameter2 + 1) / 2 + 1});
         return minDiameter;
     }
 };
