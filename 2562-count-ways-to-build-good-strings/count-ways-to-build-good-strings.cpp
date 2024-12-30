@@ -2,25 +2,26 @@ class Solution {
 public:
     const int MOD = 1e9 + 7;
 
-    int recurse(int low, int high, int zero, int one, int len, vector<int>& dp) {
-        if (len > high) return 0;
-
-        if(dp[len] != -1) {
-            return dp[len];
-        }
-        int count = 0;
-        if (len >= low && len <= high) {
-            count = 1; 
-        }
-
-        count = (count + recurse(low, high, zero, one, len + zero, dp)) % MOD;
-        count = (count + recurse(low, high, zero, one, len + one, dp)) % MOD;
-
-        return dp[len] = count;
-    }
-
     int countGoodStrings(int low, int high, int zero, int one) {
-        vector<int> dp(high + 1, -1);
-        return recurse(low, high, zero, one, 0, dp);
+        vector<int> dp(high + 1, 0);
+        dp[0] = 1; 
+
+        for (int len = 0; len <= high; ++len) {
+            if (dp[len] > 0) {
+                if (len + zero <= high) {
+                    dp[len + zero] = (dp[len + zero] + dp[len]) % MOD;
+                }
+                if (len + one <= high) {
+                    dp[len + one] = (dp[len + one] + dp[len]) % MOD;
+                }
+            }
+        }
+
+        int result = 0;
+        for (int len = low; len <= high; ++len) {
+            result = (result + dp[len]) % MOD;
+        }
+
+        return result;
     }
 };
