@@ -4,6 +4,7 @@ public:
         if(k > s.length()) {
             return false;
         }
+        if (k >= 26) return true;
         unordered_map<char,int> mp;
         int count{};
         for(char c : s) {
