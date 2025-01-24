@@ -11,6 +11,7 @@ public:
         for(int i = 0; i<graph[root].size(); i++) {
             if(removed.find(graph[root][i]) == removed.end() && visited.find(graph[root][i]) != visited.end()) {
                 flag = false;
+                break;
             } 
             else if(visited.find(graph[root][i]) == visited.end()) {
                 dfs(graph, graph[root][i]);
