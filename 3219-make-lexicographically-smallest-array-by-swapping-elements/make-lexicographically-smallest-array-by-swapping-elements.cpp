@@ -6,7 +6,7 @@ public:
 
         int currGroup = 0;
         unordered_map<int, int> numToGroup;
-        numToGroup.insert(pair<int, int>(numsSorted[0], currGroup));
+        numToGroup[numsSorted[0]] = currGroup;
 
         unordered_map<int, list<int>> groupToList;
         groupToList.insert(
@@ -18,6 +18,7 @@ public:
             }
 
             numToGroup.insert(pair<int, int>(numsSorted[i], currGroup));
+            numToGroup[numsSorted[i]] =  currGroup;
 
             if (groupToList.find(currGroup) == groupToList.end()) {
                 groupToList[currGroup] = list<int>();
