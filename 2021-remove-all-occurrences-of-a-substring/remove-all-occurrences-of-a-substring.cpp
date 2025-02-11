@@ -5,7 +5,7 @@ public:
         for(char c : s) {
             curr+=c;
             if(curr.length() >= part.length()) {
-                if(curr.substr(curr.size() - part.size() , part.size()) == part) {
+                if(curr.substr(curr.length() - part.length() , part.length()) == part) {
                     curr = curr.substr(0, curr.length() - part.length());
                 }
             }
