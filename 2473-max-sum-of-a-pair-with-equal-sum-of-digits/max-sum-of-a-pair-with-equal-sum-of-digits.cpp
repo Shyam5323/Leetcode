@@ -9,25 +9,29 @@ public:
         return sum;
     }
     int maximumSum(vector<int>& nums) {
-       unordered_map<int, priority_queue<int>> mp; 
-        unordered_set<int> digitSum;
+         unordered_map<int, priority_queue<int, vector<int>, greater<int>>> mp; 
+    set<int> digitSum;
 
-        for (int i : nums) {
-            int d = countDigitSum(i);
-            digitSum.insert(d);
-            mp[d].push(i);
+    for (int i : nums) {
+        int d = countDigitSum(i);
+        digitSum.insert(d);
+        mp[d].push(i);
+
+        if (mp[d].size() > 2) {  
+            mp[d].pop();  
         }
+    }
 
-        int ans = -1;
-        for (int d : digitSum) {
-            if (mp[d].size() < 2) continue; 
+    int ans = -1;
+    for (int d : digitSum) {
+        if (mp[d].size() < 2) continue; 
 
-            int first = mp[d].top(); mp[d].pop();
-            int second = mp[d].top();         
+        int first = mp[d].top(); mp[d].pop();
+        int second = mp[d].top();
 
-            ans = max(ans, first + second);
-        }
+        ans = max(ans, first + second);
+    }
 
-        return ans;
+    return ans;
         }
 };
