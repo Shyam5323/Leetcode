@@ -10,7 +10,7 @@ public:
     }
     int maximumSum(vector<int>& nums) {
        unordered_map<int, priority_queue<int>> mp; 
-        set<int> digitSum;
+        unordered_set<int> digitSum;
 
         for (int i : nums) {
             int d = countDigitSum(i);
