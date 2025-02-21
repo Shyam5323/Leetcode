@@ -20,7 +20,6 @@ public:
          if(k > ans.size()) {
             return "";
          }
-         sort(ans.begin(), ans.end());
          return ans[k-1];
 
     }
