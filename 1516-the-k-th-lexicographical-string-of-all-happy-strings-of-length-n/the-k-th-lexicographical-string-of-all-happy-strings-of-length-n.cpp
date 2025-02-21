@@ -1,26 +1,32 @@
 class Solution {
 public:
-    vector<string> ans;
-    void backtrack(string c, int n) {
-        if(c.length() == n) {
-            ans.push_back(c);
-            return;
+    int count = 0; 
+
+    void backtrack(string& c, int n, string& ans, int k) {
+        if (c.length() == n) {
+            count++;  
+            if (count == k) {
+                ans = c;
+                return;
+            }
+            return; 
         }
-        for(char i = 0; i < 3; i++) {
-            char newChar = (char)('a' + i);
-            if(c.length() > 0 && c[c.length() - 1] == newChar) {
+        for (char i = 0; i < 3; i++) {
+            char newChar = 'a' + i;
+            if (!c.empty() && c.back() == newChar) {
                 continue;
             }
-            string newString = c + newChar;
-            backtrack(newString, n);
+            c.push_back(newChar);
+            backtrack(c, n, ans, k);
+            if (!ans.empty()) return; 
+            c.pop_back(); 
         }
     }
-    string getHappyString(int n, int k) {
-         backtrack("", n);
-         if(k > ans.size()) {
-            return "";
-         }
-         return ans[k-1];
 
+    string getHappyString(int n, int k) {
+        string ans, c;
+        count = 0;  
+        backtrack(c, n, ans, k);
+        return ans;
     }
 };
