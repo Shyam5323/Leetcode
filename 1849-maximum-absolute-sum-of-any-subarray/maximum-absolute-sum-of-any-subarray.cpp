@@ -6,8 +6,7 @@ public:
         for (int num : nums) {
             currMax = max(num, currMax + num);
             currMin = min(num, currMin + num);
-            maxSum = max(maxSum, abs(currMax));
-            maxSum = max(maxSum, abs(currMin));
+            maxSum = max({maxSum, abs(currMax),abs(currMin) });
         }
 
         return maxSum;
