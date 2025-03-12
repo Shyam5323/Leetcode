@@ -1,12 +1,9 @@
 class Solution {
 public:
     int maximumCount(vector<int>& nums) {
-        int count1 = 0;
-        int count2 = 0;
-        for(int i : nums) {
-            if(i>0) count1++;
-            if(i<0) count2++;
-        }
-        return max(count1, count2);
+        const int n=nums.size();
+        int r=upper_bound(nums.begin(), nums.end(), 0)-nums.begin();
+        int l=lower_bound(nums.begin(), nums.end(), 0)-nums.begin();
+        return max(n-r, l);
     }
 };
